@@ -1,4 +1,4 @@
-# Connektome
+# sync Letterboxd and IMDb exports
 
 Connector utility to sync Letterboxd and IMDb exports.
 
