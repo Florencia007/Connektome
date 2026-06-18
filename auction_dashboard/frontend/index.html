@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heritage Auction Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">🏛</span>
+        <div>
+          <h1>Heritage Auction Dashboard</h1>
+          <p class="brand-sub">Sicily · South of France · Lisbon · Madrid</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="stats-bar" id="statsBar">
+          <span class="stat"><span id="statTotal">—</span> properties</span>
+          <span class="stat new"><span id="statNew">—</span> new</span>
+          <span class="stat fav"><span id="statFav">—</span> saved</span>
+          <span class="stat muted" id="lastScrape">—</span>
+        </div>
+        <button class="btn-scrape" id="btnScrape" onclick="triggerScrape()">
+          ↻ Refresh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <aside class="sidebar">
+      <section class="filter-group">
+        <label>Search</label>
+        <input type="text" id="searchInput" placeholder="masseria, château, noto…" oninput="debounceLoad()">
+      </section>
+
+      <section class="filter-group">
+        <label>Region</label>
+        <div class="pill-group" id="regionFilter">
+          <button class="pill active" data-val="">All</button>
+          <button class="pill" data-val="sicily">🇮🇹 Sicily</button>
+          <button class="pill" data-val="south_france">🇫🇷 S. France</button>
+          <button class="pill" data-val="lisbon">🇵🇹 Lisbon</button>
+          <button class="pill" data-val="madrid">🇪🇸 Madrid</button>
+        </div>
+      </section>
+
+      <section class="filter-group">
+        <label>Max Price</label>
+        <input type="range" id="priceRange" min="10000" max="300000" step="5000" value="300000"
+               oninput="updatePriceLabel(); debounceLoad()">
+        <div class="range-label">Up to <strong id="priceLabel">€300,000</strong></div>
+        <div class="range-presets">
+          <button onclick="setPrice(150000)">€150k cash</button>
+          <button onclick="setPrice(200000)">€200k</button>
+          <button onclick="setPrice(300000)">€300k max</button>
+        </div>
+      </section>
+
+      <section class="filter-group">
+        <label>Show</label>
+        <div class="pill-group" id="showFilter">
+          <button class="pill active" data-val="">All</button>
+          <button class="pill" data-val="new">New only</button>
+          <button class="pill" data-val="fav">Saved</button>
+        </div>
+      </section>
+
+      <section class="filter-group">
+        <label>Source</label>
+        <select id="sourceFilter" onchange="loadProperties()">
+          <option value="">All sources</option>
+          <option value="spain_boe">Spain (BOE)</option>
+          <option value="italy_astalegale">Italy (AstaLegale)</option>
+          <option value="france_licitor">France (Licitor)</option>
+          <option value="portugal_eleiloes">Portugal (e-Leilões)</option>
+        </select>
+      </section>
+
+      <section class="filter-group budget-box">
+        <label>Budget Calculator</label>
+        <div class="budget-row">
+          <span>Cash available</span>
+          <strong>€150,000</strong>
+        </div>
+        <div class="budget-row">
+          <span>5-year financing</span>
+          <strong>€150,000</strong>
+        </div>
+        <div class="budget-row total">
+          <span>Total budget</span>
+          <strong>€300,000</strong>
+        </div>
+        <div class="budget-row muted">
+          <span>Monthly (5yr @ 5%)</span>
+          <strong>≈ €2,830</strong>
+        </div>
+      </section>
+    </aside>
+
+    <section class="content">
+      <div class="toolbar">
+        <span class="result-count" id="resultCount">Loading…</span>
+        <div class="view-toggle">
+          <button class="view-btn active" id="viewGrid" onclick="setView('grid')">⊞ Grid</button>
+          <button class="view-btn" id="viewList" onclick="setView('list')">☰ List</button>
+        </div>
+      </div>
+
+      <div id="propertyGrid" class="property-grid"></div>
+      <div id="loadMore" class="load-more" style="display:none">
+        <button onclick="loadMore()">Load more</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Property Detail Modal -->
+  <div id="modal" class="modal" onclick="closeModal(event)">
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
